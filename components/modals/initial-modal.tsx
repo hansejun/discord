@@ -24,6 +24,8 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { useEffect, useState } from 'react';
 import FileUpload from '@/components/common/file-upload';
+import serverApi from '@/api/server';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -34,6 +36,7 @@ const formSchema = z.object({
 
 const InitialModal = () => {
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -43,7 +46,14 @@ const InitialModal = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    try {
+      await serverApi.createServer(values);
+      form.reset();
+      router.refresh();
+      window.location.reload();
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {

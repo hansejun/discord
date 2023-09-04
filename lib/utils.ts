@@ -19,5 +19,5 @@ export function toEqual<T>(item1: T, item2: T) {
 }
 
 export function cloneDeep<T>(item: T) {
-  return cloneDeep(item);
+  return clone(item);
 }
