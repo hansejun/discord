@@ -1,8 +1,7 @@
 import { atom, useRecoilState } from 'recoil';
 
 export type ModalType = 'createServer';
-//   onOpen: (type: ModalType) => void;
-//   onClose: () => void;
+
 interface Modal {
   type: ModalType | null;
   isOpen: boolean;
