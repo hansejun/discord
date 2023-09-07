@@ -1,7 +1,7 @@
 import { Server } from '@prisma/client';
 import { atom, useRecoilState } from 'recoil';
 
-export type ModalType = 'createServer' | 'invite';
+export type ModalType = 'createServer' | 'invite' | 'editServer';
 
 interface ModalData {
   server?: Server;
