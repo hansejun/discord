@@ -6,6 +6,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function firstItem<T>(arr: T[]) {
+  return arr[0];
+}
+
 export function lastItem<T>(arr: T[]) {
   return arr[arr.length - 1];
 }
