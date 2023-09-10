@@ -11,5 +11,14 @@ const updateServer = async (
   await axios.patch(`/api/servers/${serverId}`, values);
 };
 
-const serverApi = { createServer, updateServer };
+const inviteServer = async (serverId: string | undefined) => {
+  const response = await axios.patch(`/api/servers/${serverId}/invite-code`);
+  return response.data;
+};
+
+const leaveServer = async (serverId: string | undefined) => {
+  await axios.patch(`/api/servers/${serverId}/leave`);
+};
+
+const serverApi = { createServer, updateServer, inviteServer, leaveServer };
 export default serverApi;
