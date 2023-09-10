@@ -1,4 +1,4 @@
-import { Server } from '@prisma/client';
+import { ChannelType, Server } from '@prisma/client';
 import { atom, useRecoilState } from 'recoil';
 
 export type ModalType =
@@ -12,6 +12,7 @@ export type ModalType =
 
 interface ModalData {
   server?: Server;
+  channelType?: ChannelType;
 }
 
 interface Modal {

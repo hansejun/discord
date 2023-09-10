@@ -33,17 +33,19 @@ import { useParams, useRouter } from 'next/navigation';
 import { useModal } from '@/hooks/useModal';
 import { ChannelType } from '@prisma/client';
 import channelApi from '@/api/channels';
+import { useEffect } from 'react';
 
 const CreateChannelModal = () => {
-  const { isOpen, onClose, type } = useModal();
+  const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
   const params = useParams();
 
   const isModalOpen = isOpen && type === 'createChannel';
+  const { channelType } = data;
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: '', type: ChannelType.TEXT },
+    defaultValues: { name: '', type: channelType || ChannelType.TEXT },
   });
 
   const isLoading = form.formState.isSubmitting;
@@ -63,6 +65,14 @@ const CreateChannelModal = () => {
     form.reset();
     onClose();
   };
+
+  useEffect(() => {
+    if (channelType) {
+      form.setValue('type', channelType);
+    } else {
+      form.setValue('type', ChannelType.TEXT);
+    }
+  }, [channelType, form]);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
