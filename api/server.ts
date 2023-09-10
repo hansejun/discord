@@ -20,5 +20,15 @@ const leaveServer = async (serverId: string | undefined) => {
   await axios.patch(`/api/servers/${serverId}/leave`);
 };
 
-const serverApi = { createServer, updateServer, inviteServer, leaveServer };
+const deleteServer = async (serverID: string | undefined) => {
+  await axios.delete(`/api/servers/${serverID}`);
+};
+
+const serverApi = {
+  createServer,
+  updateServer,
+  inviteServer,
+  leaveServer,
+  deleteServer,
+};
 export default serverApi;
