@@ -1,9 +1,13 @@
-'use client';
+"use client";
 
-import * as z from 'zod';
-import qs from 'query-string';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+
+import { ChannelType } from "@prisma/client";
+import { useModal } from "@/hooks/useModal";
 
 import {
   Dialog,
@@ -11,7 +15,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -19,33 +23,30 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
-import { useParams, useRouter } from 'next/navigation';
-import { useModal } from '@/hooks/useModal';
-import { ChannelType } from '@prisma/client';
-import channelApi from '@/api/channels';
-import { useEffect } from 'react';
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+import channelApi from "@/api/channels";
 
 const CreateChannelModal = () => {
   const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
   const params = useParams();
 
-  const isModalOpen = isOpen && type === 'createChannel';
+  const isModalOpen = isOpen && type === "createChannel";
   const { channelType } = data;
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: '', type: channelType || ChannelType.TEXT },
+    defaultValues: { name: "", type: channelType || ChannelType.TEXT },
   });
 
   const isLoading = form.formState.isSubmitting;
@@ -68,16 +69,16 @@ const CreateChannelModal = () => {
 
   useEffect(() => {
     if (channelType) {
-      form.setValue('type', channelType);
+      form.setValue("type", channelType);
     } else {
-      form.setValue('type', ChannelType.TEXT);
+      form.setValue("type", ChannelType.TEXT);
     }
   }, [channelType, form]);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
-      <DialogContent className="bg-white text-black p-0 overflow-hidden">
-        <DialogHeader className="pt-8 px-6">
+      <DialogContent className="overflow-hidden bg-white p-0 text-black">
+        <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-center text-2xl font-bold">
             Create Channel
           </DialogTitle>
@@ -90,13 +91,13 @@ const CreateChannelModal = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
                       Channel name
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0  "
+                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0  "
                         placeholder="Enter channel name"
                         {...field}
                       />
@@ -117,7 +118,7 @@ const CreateChannelModal = () => {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="bg-zinc-300/50 border-0 focus:ring-0 text-black ring-offset-0 focus:ring-offset-0 capitalize outline-none ">
+                        <SelectTrigger className="border-0 bg-zinc-300/50 capitalize text-black outline-none ring-offset-0 focus:ring-0 focus:ring-offset-0 ">
                           <SelectValue
                             placeholder="Select a channel type"
                             className="placeholder:text-gray-400"
@@ -125,7 +126,7 @@ const CreateChannelModal = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.values(ChannelType).map(type => (
+                        {Object.values(ChannelType).map((type) => (
                           <SelectItem
                             key={type}
                             value={type}
@@ -159,10 +160,10 @@ const formSchema = z.object({
   name: z
     .string()
     .min(1, {
-      message: 'Channel name is required',
+      message: "Channel name is required",
     })
-    .refine(name => name !== ' general', {
-      message: 'Channel name cannot be general',
+    .refine((name) => name !== " general", {
+      message: "Channel name cannot be general",
     }),
   type: z.nativeEnum(ChannelType),
 });

@@ -1,8 +1,11 @@
-'use client';
+"use client";
 
-import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useModal } from "@/hooks/useModal";
 
 import {
   Dialog,
@@ -11,7 +14,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -19,26 +22,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
-import FileUpload from '@/components/common/file-upload';
-import serverApi from '@/api/server';
-import { useRouter } from 'next/navigation';
-import { useModal } from '@/hooks/useModal';
-import { useEffect } from 'react';
+} from "../ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import FileUpload from "@/components/common/file-upload";
+import serverApi from "@/api/server";
 
 const EditServerModal = () => {
   const router = useRouter();
   const { isOpen, onClose, type, data } = useModal();
 
-  const isModalOpen = isOpen && type === 'editServer';
+  const isModalOpen = isOpen && type === "editServer";
 
   const { server } = data;
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: '', imageUrl: '' },
+    defaultValues: { name: "", imageUrl: "" },
   });
 
   const isLoading = form.formState.isSubmitting;
@@ -61,15 +61,15 @@ const EditServerModal = () => {
 
   useEffect(() => {
     if (server) {
-      form.setValue('name', server.name);
-      form.setValue('imageUrl', server.imageURl);
+      form.setValue("name", server.name);
+      form.setValue("imageUrl", server.imageURl);
     }
   }, [server, form]);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
-      <DialogContent className="bg-white text-black p-0 overflow-hidden">
-        <DialogHeader className="pt-8 px-6">
+      <DialogContent className="overflow-hidden bg-white p-0 text-black">
+        <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-center text-2xl font-bold">
             Customize your server
           </DialogTitle>
@@ -102,13 +102,13 @@ const EditServerModal = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
                       Server name
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
                         placeholder="Enter server name"
                         {...field}
                       />
@@ -134,7 +134,7 @@ export default EditServerModal;
 
 const formSchema = z.object({
   name: z.string().min(1, {
-    message: 'Server name is required',
+    message: "Server name is required",
   }),
-  imageUrl: z.string().min(1, { message: 'Server image is required' }),
+  imageUrl: z.string().min(1, { message: "Server image is required" }),
 });

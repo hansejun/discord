@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
-import ActionTooltip from '../common/action-tooltip';
-import { cn } from '@/lib/utils';
-import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
+import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+
+import ActionTooltip from "@/components/common/action-tooltip";
 
 interface PropsType {
   id: string;
@@ -25,16 +25,16 @@ const NavigationItem = ({ id, imageURl, name }: PropsType) => {
       <button onClick={onClick} className="group relative flex items-center">
         <div
           className={cn(
-            'absolute left-0 bg-primary rounded-r-full transition-all w-[4px]',
-            params?.serverId !== id && 'group-hover:h-[20px]',
-            params?.serverId === id ? 'h-[36px]' : 'h-[8px]',
+            "absolute left-0 w-[4px] rounded-r-full bg-primary transition-all",
+            params?.serverId !== id && "group-hover:h-[20px]",
+            params?.serverId === id ? "h-[36px]" : "h-[8px]",
           )}
         />
         <div
           className={cn(
-            'relative group flex mx-3 h-[48px] w-[48px] rounded-[24px] group-hover:rounded-[16px] transition-all overflow-hidden',
+            "group relative mx-3 flex h-[48px] w-[48px] overflow-hidden rounded-[24px] transition-all group-hover:rounded-[16px]",
             params?.serverId === id &&
-              'bg-primary/10 text-primary rounded-[16px]',
+              "rounded-[16px] bg-primary/10 text-primary",
           )}
         >
           <Image fill src={imageURl} alt="Channel" />

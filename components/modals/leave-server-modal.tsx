@@ -1,4 +1,8 @@
-'use client';
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useModal } from "@/hooks/useModal";
 
 import {
   Dialog,
@@ -7,19 +11,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { useModal } from '@/hooks/useModal';
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import axios from 'axios';
-import serverApi from '@/api/server';
-import { useRouter } from 'next/navigation';
+} from "@/components/ui/dialog";
+
+import { Button } from "@/components/ui/button";
+import serverApi from "@/api/server";
 
 const LeaveServerModal = () => {
   const { onOpen, isOpen, onClose, type, data } = useModal();
   const router = useRouter();
 
-  const isModalOpen = isOpen && type === 'leaveServer';
+  const isModalOpen = isOpen && type === "leaveServer";
   const { server } = data;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +32,7 @@ const LeaveServerModal = () => {
 
       onClose();
       router.refresh();
-      router.push('/');
+      router.push("/");
     } catch (err) {
       console.log(err);
     } finally {
@@ -41,8 +42,8 @@ const LeaveServerModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-white text-black p-0 overflow-hidden">
-        <DialogHeader className="pt-8 px-6">
+      <DialogContent className="overflow-hidden bg-white p-0 text-black">
+        <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-center text-2xl font-bold">
             Leave Server
           </DialogTitle>
@@ -54,7 +55,7 @@ const LeaveServerModal = () => {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="bg-gray-100 px-6 py-4">
-          <div className="flex-between items-center w-full">
+          <div className="flex-between w-full items-center">
             <Button disabled={isLoading} onClick={onClose} variant="ghost">
               Cancel
             </Button>

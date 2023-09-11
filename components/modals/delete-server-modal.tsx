@@ -1,4 +1,8 @@
-'use client';
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useModal } from "@/hooks/useModal";
 
 import {
   Dialog,
@@ -7,18 +11,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { useModal } from '@/hooks/useModal';
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import serverApi from '@/api/server';
-import { useRouter } from 'next/navigation';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
+import serverApi from "@/api/server";
 
 const DeleteServerModal = () => {
   const { isOpen, onClose, type, data } = useModal();
   const router = useRouter();
 
-  const isModalOpen = isOpen && type === 'deleteServer';
+  const isModalOpen = isOpen && type === "deleteServer";
   const { server } = data;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +32,7 @@ const DeleteServerModal = () => {
 
       onClose();
       router.refresh();
-      router.push('/');
+      router.push("/");
     } catch (err) {
       console.log(err);
     } finally {
@@ -40,15 +42,15 @@ const DeleteServerModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-white text-black p-0 overflow-hidden">
-        <DialogHeader className="pt-8 px-6">
+      <DialogContent className="overflow-hidden bg-white p-0 text-black">
+        <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-center text-2xl font-bold">
             Delete Server
           </DialogTitle>
           <DialogDescription className="text-center text-zinc-500">
             Are you sure you want to do this?
             <br />
-            <span className="text-indigo-500 font-semibold">
+            <span className="font-semibold text-indigo-500">
               {server?.name}
             </span>
             will be permanently deleted.
@@ -58,7 +60,7 @@ const DeleteServerModal = () => {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="bg-gray-100 px-6 py-4">
-          <div className="flex-between items-center w-full">
+          <div className="flex-between w-full items-center">
             <Button disabled={isLoading} onClick={onClose} variant="ghost">
               Cancel
             </Button>
