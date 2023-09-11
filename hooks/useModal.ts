@@ -1,17 +1,20 @@
-import { ChannelType, Server } from '@prisma/client';
-import { atom, useRecoilState } from 'recoil';
+import { Channel, ChannelType, Server } from "@prisma/client";
+import { atom, useRecoilState } from "recoil";
 
 export type ModalType =
-  | 'createServer'
-  | 'invite'
-  | 'editServer'
-  | 'members'
-  | 'createChannel'
-  | 'leaveServer'
-  | 'deleteServer';
+  | "createServer"
+  | "invite"
+  | "editServer"
+  | "members"
+  | "createChannel"
+  | "leaveServer"
+  | "deleteServer"
+  | "deleteChannel"
+  | "editChannel";
 
 interface ModalData {
   server?: Server;
+  channel?: Channel;
   channelType?: ChannelType;
 }
 
@@ -22,7 +25,7 @@ interface Modal {
 }
 
 const modalAtom = atom<Modal>({
-  key: 'modal',
+  key: "modal",
   default: { type: null, isOpen: false, data: {} },
 });
 
