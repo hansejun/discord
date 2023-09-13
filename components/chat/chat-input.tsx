@@ -6,9 +6,11 @@ import * as z from "zod";
 
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Plus, Smile } from "lucide-react";
+import { Plus } from "lucide-react";
 import chatApi from "@/api/chat";
 import { useModal } from "@/hooks/useModal";
+import { EmojiPicker } from "@/components/common/emoji-picker";
+import { useRouter } from "next/navigation";
 
 interface PropsType {
   apiUrl: string;
@@ -23,6 +25,7 @@ const formScehma = z.object({
 
 export const ChatInput = ({ apiUrl, query, name, type }: PropsType) => {
   const { onOpen } = useModal();
+  const router = useRouter();
   const form = useForm<z.infer<typeof formScehma>>({
     resolver: zodResolver(formScehma),
     defaultValues: { content: "" },
@@ -32,6 +35,8 @@ export const ChatInput = ({ apiUrl, query, name, type }: PropsType) => {
   const onSubmit = async (value: z.infer<typeof formScehma>) => {
     try {
       await chatApi.sendMessage(apiUrl, query, value);
+      form.reset();
+      router.refresh();
     } catch (e) {
       console.log(e);
     }
@@ -62,7 +67,11 @@ export const ChatInput = ({ apiUrl, query, name, type }: PropsType) => {
                     className="border-0 border-none bg-zinc-200/80 px-14 py-6 text-zinc-600 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-zinc-700/75 dark:text-zinc-200"
                   />
                   <div className="absolute right-8 top-7">
-                    <Smile />
+                    <EmojiPicker
+                      onChange={(emoji: string) =>
+                        field.onChange(`${field.value} ${emoji}`)
+                      }
+                    />
                   </div>
                 </div>
               </FormControl>
