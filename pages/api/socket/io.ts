@@ -2,7 +2,7 @@ import { Server as NetServer } from "http";
 import { NextApiRequest } from "next";
 import { Server as ServerIO } from "socket.io";
 
-import { NextApiRequestWithIO } from "@/types/server";
+import { NextApiResponseWithIO } from "@/types/server";
 
 export const config = {
   api: {
@@ -10,7 +10,7 @@ export const config = {
   },
 };
 
-const ioHandler = (req: NextApiRequest, res: NextApiRequestWithIO) => {
+const ioHandler = (req: NextApiRequest, res: NextApiResponseWithIO) => {
   if (!res.socket.server.io) {
     const path = "/api/socket/io";
     const httpServer: NetServer = res.socket.server as any;
