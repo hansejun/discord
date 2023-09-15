@@ -40,6 +40,17 @@ const editMessage = async (
   await axios.patch(apiUrl, values);
 };
 
-const chatApi = { sendMessage, sendFile, editMessage };
+const deleteMessage = async (
+  socketUrl: string,
+  socketQuery: Record<string, string>,
+) => {
+  const apiUrl = queryString.stringifyUrl({
+    url: socketUrl,
+    query: socketQuery,
+  });
+  await axios.delete(apiUrl);
+};
+
+const chatApi = { sendMessage, sendFile, editMessage, deleteMessage };
 
 export default chatApi;

@@ -15,6 +15,8 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import chatApi from "@/api/chat";
+import { useModal } from "@/hooks/useModal";
+import { useParams, useRouter } from "next/navigation";
 
 interface PropsType {
   id: string;
@@ -52,8 +54,10 @@ const ChatItem = ({
   socketQuery,
   socketUrl,
 }: PropsType) => {
+  const params = useParams();
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const { onOpen } = useModal();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -72,6 +76,12 @@ const ChatItem = ({
   const isImage = !isPDF && fileUrl;
 
   const isLoading = form.formState.isSubmitting;
+
+  const onMemberClick = () => {
+    if (member.id === currentMember.id) return;
+
+    router.push(`/servers/${params?.serverId}/conversations/${member.id}`);
+  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -100,13 +110,19 @@ const ChatItem = ({
   return (
     <div className="group relative flex w-full items-center p-4 transition hover:bg-black/5">
       <div className="group flex w-full items-start gap-x-2">
-        <div className="cursor-pointer transition hover:drop-shadow-md">
+        <div
+          onClick={onMemberClick}
+          className="cursor-pointer transition hover:drop-shadow-md"
+        >
           <UserAvatar src={member.profile.imageUrl} />
         </div>
         <div className="flex w-full flex-col">
           <div className="flex items-center gap-x-2">
             <div className="flex items-center">
-              <p className="cursor-pointer text-sm font-semibold hover:underline">
+              <p
+                onClick={onMemberClick}
+                className="cursor-pointer text-sm font-semibold hover:underline"
+              >
                 {member.profile.name}
               </p>
               <ActionTooltip label={member.role}>
@@ -208,7 +224,15 @@ const ChatItem = ({
             </ActionTooltip>
           )}
           <ActionTooltip label="Delete">
-            <Trash className="ml-auto h-4 w-4 cursor-pointer text-zinc-500 transition hover:text-zinc-600 dark:hover:text-zinc-300" />
+            <Trash
+              onClick={() =>
+                onOpen("deleteMessage", {
+                  apiUrl: `${socketUrl}/${id}`,
+                  query: socketQuery,
+                })
+              }
+              className="ml-auto h-4 w-4 cursor-pointer text-zinc-500 transition hover:text-zinc-600 dark:hover:text-zinc-300"
+            />
           </ActionTooltip>
         </div>
       )}
