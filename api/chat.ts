@@ -26,6 +26,20 @@ const sendFile = async (
   await axios.post(apiUrl, { ...values, content: values.fileUrl });
 };
 
-const chatApi = { sendMessage, sendFile };
+const editMessage = async (
+  socketUrl: string,
+  id: string,
+  socketQuery: Record<string, string>,
+  values: { content: string },
+) => {
+  const apiUrl = queryString.stringifyUrl({
+    url: `${socketUrl}/${id}`,
+    query: socketQuery,
+  });
+
+  await axios.patch(apiUrl, values);
+};
+
+const chatApi = { sendMessage, sendFile, editMessage };
 
 export default chatApi;

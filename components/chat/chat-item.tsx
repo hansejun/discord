@@ -1,12 +1,20 @@
 "use client";
 
-import { Member, MemberRole, Message, Profile } from "@prisma/client";
-import UserAvatar from "../common/user-avatar";
-import ActionTooltip from "../common/action-tooltip";
-import { Edit, FileIcon, ShieldAlert, ShieldCheck, Trash } from "lucide-react";
+import * as z from "zod";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Edit, FileIcon, ShieldAlert, ShieldCheck, Trash } from "lucide-react";
+import { Member, MemberRole, Message, Profile } from "@prisma/client";
+import UserAvatar from "@/components/common/user-avatar";
+import ActionTooltip from "@/components/common/action-tooltip";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import chatApi from "@/api/chat";
 
 interface PropsType {
   id: string;
@@ -28,6 +36,10 @@ const roleIconMap = {
   ADMIN: <ShieldAlert className="ml-2 h-4 w-4 text-rose-500" />,
 };
 
+const formSchema = z.object({
+  content: z.string().min(1),
+});
+
 const ChatItem = ({
   id,
   content,
@@ -43,6 +55,13 @@ const ChatItem = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      content,
+    },
+  });
+
   const fileType = fileUrl?.split(".").pop();
   const isAdmin = currentMember.role === MemberRole.ADMIN;
   const isModerator = currentMember.role === MemberRole.MODERATOR;
@@ -51,6 +70,32 @@ const ChatItem = ({
   const canEditMessage = !deleted && isOwner && !fileUrl;
   const isPDF = fileType === "pdf" && fileUrl;
   const isImage = !isPDF && fileUrl;
+
+  const isLoading = form.formState.isSubmitting;
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await chatApi.editMessage(socketUrl, id, socketQuery, values);
+      form.reset();
+      setIsEditing(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const handleKeydown = useCallback((e: any) => {
+    if (e.key === "Escape" || e.keyCode === 27) {
+      setIsEditing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    form.reset({ content });
+  }, [form, content]);
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeydown);
+    return () => window.removeEventListener("keydown", handleKeydown);
+  }, [handleKeydown]);
 
   return (
     <div className="group relative flex w-full items-center p-4 transition hover:bg-black/5">
@@ -116,6 +161,39 @@ const ChatItem = ({
                 </span>
               )}
             </p>
+          )}
+          {!fileUrl && isEditing && (
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex w-full items-center gap-x-2 pt-2"
+              >
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormControl>
+                        <div className="relatvie w-full">
+                          <Input
+                            disabled={isLoading}
+                            className="border-0 border-none bg-zinc-200/90 p-2 text-zinc-600 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-zinc-700/75 dark:text-zinc-200"
+                            placeholder="Edited Message "
+                            {...field}
+                          />
+                        </div>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <Button size="sm" variant="primary" disabled={isLoading}>
+                  Save
+                </Button>
+              </form>
+              <span className="mt-1 text-[10px] text-zinc-400">
+                Press escape to cancel, Enter to save
+              </span>
+            </Form>
           )}
         </div>
       </div>
