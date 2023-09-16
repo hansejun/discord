@@ -4,9 +4,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 interface PropsType {
-  addKey: string;
-  updateKey: string;
-  queryKey: string;
+  addKey: string; // 메시지 전송 key
+  updateKey: string; // 메시지 수정 key
+  queryKey: string; // 리액트 쿼리 key
 }
 
 type MessageWithMemberWithProfile = Message & {

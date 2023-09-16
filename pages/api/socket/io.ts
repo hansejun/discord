@@ -20,7 +20,6 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseWithIO) => {
       addTrailingSlash: false,
     });
     res.socket.server.io = io;
-    console.log("io", io);
   }
 
   res.end();
