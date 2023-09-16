@@ -52,6 +52,7 @@ const CreateChannelModal = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!params?.serverId) return;
     try {
       await channelApi.createChannel(params.serverId as string, values);
       handleModalClose();
